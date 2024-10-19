@@ -14,5 +14,6 @@ namespace Application_Layer.Services.Propert
         Task AddProperty(PropertyDto propertyDto);
         Task UpdateProperty(PropertyDto propertyDto);
         Task Remove(PropertyDto propertyDto);
+        Task<bool> IsProperty(int propertyId);
     }
 }

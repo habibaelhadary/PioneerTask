@@ -71,7 +71,6 @@ namespace Application_Layer.Services.Propert
             propId.Type = propertyDto.Type;
             propId.Required = propertyDto.Required;
 
-            // Update dropdown values
             propId.DropDownValues = propertyDto.DropDownValues.Select(v => new DropDownValues
             {
                 Id = v.Id,
@@ -93,7 +92,10 @@ namespace Application_Layer.Services.Propert
             }
         }
 
-
+        public async Task<bool> IsProperty(int propertyId)
+        {
+            return await _propReprositry.IsPropertyInUse(propertyId);
+        }
 
     }
 }

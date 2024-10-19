@@ -46,7 +46,19 @@
 
                     <td>
                         <a asp-controller="Property" asp-action="Edit" asp-route-Id="@property.Id" class="btn btn-warning">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@property.Id" class="btn btn-danger">Delete</a>
+                        @* <a asp-action="Delete" asp-route-id="@property.Id" class="btn btn-danger">Delete</a> *@
+                            @if (ViewBag.PropertyUsage.ContainsKey(property.Id) && ViewBag.PropertyUsage[property.Id])
+                            {
+                            <button class="btn btn-danger" disabled>Delete (In Use)</button>
+                            }
+                            else
+                            {
+                            <form asp-action="Delete" asp-controller="Property" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@property.Id" />
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                            }
+                    
                     </td>
                 </tr>
             }

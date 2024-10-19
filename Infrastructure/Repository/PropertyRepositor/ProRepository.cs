@@ -50,10 +50,15 @@ namespace Infrastructure.Repository.PropertyRepositor
             _context.Properties.Update(property);
             await _context.SaveChangesAsync();
         }
+        public async Task<bool> IsPropertyInUse(int propertyId)
+        {
+            return await _context.Employees_Properties.AnyAsync(ep => ep.PropertyId == propertyId);
+        }
         public async Task Remove(Property property)
         {
             var propertyGet = _context.Properties.Include(x => x.DropDownValues).FirstOrDefault(x => x.Id == property.Id);
             //soft delete
+
             if (propertyGet != null)
             {
                 propertyGet.IsDeleted = true;

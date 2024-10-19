@@ -1,8 +1,8 @@
 ﻿@model Application_Layer.Dtos.Propert.PropertyDto
 
-<h2 class="mt-5">@(Model.Id == 0 ? "Create Property New" : "Edit Property")</h2>
+<h2 class="mt-5">Edit Property</h2>
 
-<form asp-action="@(Model.Id == 0 ? "Create" : "Edit")" method="post">
+<form asp-action="Edit" method="post">
     <input type="hidden" asp-for="Id" />
 
     <div>
@@ -10,16 +10,21 @@
         <input type="text" asp-for="Name" class="form-control" aria-describedby="DataName" placeholder="Enter Data Name">
         <span asp-validation-for="Name" class="text-danger invalid-feedback"></span>
     </div>
+    @{
+        var isDisabled = ViewBag.IsInUse ? "disabled" : "";
+    }
 
     <div class="form-group">
         <label asp-for="Type" class="form-label mt-4">Data Type</label>
-        <select asp-for="Type" class="form-control" id="property-type">
-
-            <option value="String">String</option>
-            <option value="Integer">Integer</option>
-            <option value="Date">Date</option>
-            <option value="Dropdown">Dropdown</option>
-        </select>
+        @if (ViewBag.IsInUse)
+        {
+            <select asp-for="Type" asp-items="Html.GetEnumSelectList<Domin.Enum.PropertyTypes>()" class="form-control" id="property-type" disabled></select>
+            <small class="form-text text-warning">You cannot change the property type because it's already linked to employees.</small>
+        }
+        else
+        {
+            <select asp-for="Type" asp-items="Html.GetEnumSelectList<Domin.Enum.PropertyTypes>()" class="form-control" id="property-type"></select>
+        }
     </div>
 
     <div class="form-group mt-4">
@@ -33,7 +38,6 @@
     <div id="dropdown-values-section" class="form-group mt-4" style="display: none;">
         <label>Dropdown Values</label>
         <div id="dropdown-values-container">
-
             @for (int i = 0; i < Model.DropDownValues.Count; i++)
             {
                 <div class="input-group mb-2">
@@ -45,6 +49,7 @@
         <button type="button" id="add-dropdown-value" class="btn btn-secondary mt-2">Add Dropdown Value</button>
     </div>
 
+    <!-- Submit Button -->
     <button type="submit" class="btn btn-primary mt-4">Update</button>
 </form>
 
@@ -55,7 +60,8 @@
             const typeSelect = document.getElementById("property-type");
             const dropdownSection = document.getElementById("dropdown-values-section");
 
-            if (typeSelect.value === "Dropdown") {
+           
+            if (typeSelect.value === "3") { 
                 dropdownSection.style.display = "block";
             } else {
                 dropdownSection.style.display = "none";
@@ -63,30 +69,31 @@
             }
         }
 
-
+  
         function clearDropdownValues() {
             const container = document.getElementById("dropdown-values-container");
             container.innerHTML = '';
         }
 
+      
         function addDropdownValue() {
             const container = document.getElementById("dropdown-values-container");
             const index = container.children.length;
             const input = document.createElement("div");
             input.className = "input-group mb-2";
             input.innerHTML = `
-                                <input type="text" name="DropDownValues[${index}].Value" class="form-control" placeholder="Enter Dropdown Value" />
-                                <button type="button" class="btn btn-danger btn-sm ms-2" onclick="this.parentNode.remove()">Remove</button>
-                            `;
+                <input type="text" name="DropDownValues[${index}].Value" class="form-control" placeholder="Enter Dropdown Value" />
+                <button type="button" class="btn btn-danger btn-sm ms-2" onclick="this.parentNode.remove()">Remove</button>
+            `;
             container.appendChild(input);
         }
-
 
         document.getElementById("property-type").addEventListener("change", toggleDropdownValues);
         document.getElementById("add-dropdown-value").addEventListener("click", addDropdownValue);
 
         toggleDropdownValues();
     </script>
+
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 }

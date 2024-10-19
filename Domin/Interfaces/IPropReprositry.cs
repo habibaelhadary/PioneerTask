@@ -15,5 +15,6 @@ namespace Domin.Interfaces
         Task Add(Property property);
         Task Update(Property property);
         Task Remove(Property property);
+        Task<bool> IsPropertyInUse(int propertyId);
     }
 }

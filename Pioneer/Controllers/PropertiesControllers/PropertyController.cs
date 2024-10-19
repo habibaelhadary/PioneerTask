@@ -14,6 +14,14 @@ namespace Pioneer.Controllers.PropertiesControllers
         public async Task<IActionResult> Index()
         {
             var AllProperty = await _propertyService.GetAllProperty();
+            var propertyUsage = new Dictionary<int, bool>();
+
+            foreach (var property in AllProperty)
+            {
+                var Use = await _propertyService.IsProperty(property.Id);
+                propertyUsage.Add(property.Id,Use);
+            }
+            ViewBag.PropertyUsage = propertyUsage;
             return View(AllProperty);
 
         }
@@ -42,6 +50,9 @@ namespace Pioneer.Controllers.PropertiesControllers
             {
                 return NotFound();
             }
+            bool isInUse = await _propertyService.IsProperty(id);
+
+            ViewBag.IsInUse = isInUse;
             return View(property);
         }
 
@@ -63,6 +74,8 @@ namespace Pioneer.Controllers.PropertiesControllers
             {
                 return NotFound();
             }
+
+      
             _propertyService.Remove(property);
             return RedirectToAction("Index");
         }
