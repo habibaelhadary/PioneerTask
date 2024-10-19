@@ -27,13 +27,13 @@ namespace Infrastructure.Repository.EmpRepositor
         public async Task<Employee> getById(int id)
         {
             return _context.Employees.Include(x => x.EmployeeProperties).ThenInclude(ep => ep.Property).ThenInclude(d => d.DropDownValues)
-                .FirstOrDefault(e => e.Id == id);
+                .FirstOrDefault(e => e.Id == id && e.IsDeleted==false);
         }
         public async Task Add(Employee employee)
         {
             try
             {
-                var CodeExist = _context.Employees.Where(x => x.Name == employee.Code).FirstOrDefault();
+                var CodeExist = _context.Employees.Where(x => x.Code == employee.Code && x.IsDeleted == false).FirstOrDefault();
                 if (CodeExist == null)
                 {
                     await _context.Employees.AddAsync(employee);
@@ -65,7 +65,7 @@ namespace Infrastructure.Repository.EmpRepositor
                         emp.IsDeleted = true;
                     }
                 }
-                Update(foundEmp);
+             await   Update(foundEmp);
             }
         }
     }

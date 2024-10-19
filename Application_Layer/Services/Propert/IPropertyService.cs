@@ -13,7 +13,7 @@ namespace Application_Layer.Services.Propert
         Task<PropertyDto> GetByIdProperty(int id);
         Task AddProperty(PropertyDto propertyDto);
         Task UpdateProperty(PropertyDto propertyDto);
-        Task Remove(PropertyDto propertyDto);
+        Task Remove(int id);
         Task<bool> IsProperty(int propertyId);
     }
 }

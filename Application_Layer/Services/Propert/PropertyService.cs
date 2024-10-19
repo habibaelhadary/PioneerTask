@@ -55,6 +55,7 @@ namespace Application_Layer.Services.Propert
         {
             var propertyNew = new Domin.Models.Properties.Property
             {
+                Id= propertyDto.Id,
                 Name = propertyDto.Name,
                 Type = propertyDto.Type,
                 Required = propertyDto.Required,
@@ -82,9 +83,9 @@ namespace Application_Layer.Services.Propert
 
         }
 
-        public async Task Remove(PropertyDto propertyDto)
+        public async Task Remove(int id)
         {
-            var property = await _propReprositry.GetById(propertyDto.Id);
+            var property = await _propReprositry.GetById(id);
 
             if (property != null)
             {

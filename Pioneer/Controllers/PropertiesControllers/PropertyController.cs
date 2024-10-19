@@ -69,14 +69,14 @@ namespace Pioneer.Controllers.PropertiesControllers
 
         public async Task<IActionResult> Delete(int id)
         {
-            var property = await _propertyService.GetByIdProperty(id);
-            if (property == null)
-            {
-                return NotFound();
-            }
+            //var property = await _propertyService.GetByIdProperty(id);
+            //if (property == null)
+            //{
+            //    return NotFound();
+            //}
 
       
-            _propertyService.Remove(property);
+          await  _propertyService.Remove(id);
             return RedirectToAction("Index");
         }
     }

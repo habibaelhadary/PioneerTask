@@ -148,7 +148,7 @@ namespace Application_Layer.Services.EmpServices
         {
 
 
-            var employee = await _propReprositry.GetById(emp.EmployeeId);
+            var employee = await _employeeRepository.getById(emp.EmployeeId);
 
             if (employee != null)
             {

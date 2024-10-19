@@ -32,7 +32,7 @@ namespace Infrastructure.Repository.PropertyRepositor
         {
             try
             {
-                var NameExist = _context.Properties.Where(x => x.Name == property.Name).FirstOrDefault();
+                var NameExist = _context.Properties.Where(x => x.Name == property.Name&& x.IsDeleted==false).FirstOrDefault();
                 if (NameExist == null)
                 {
                     await _context.Properties.AddAsync(property);
@@ -56,16 +56,13 @@ namespace Infrastructure.Repository.PropertyRepositor
         }
         public async Task Remove(Property property)
         {
-            var propertyGet = _context.Properties.Include(x => x.DropDownValues).FirstOrDefault(x => x.Id == property.Id);
-            //soft delete
+         
 
-            if (propertyGet != null)
+            if (property != null)
             {
-                propertyGet.IsDeleted = true;
+                property.IsDeleted = true;
 
-                //_context.Properties.Update(propertyGet);
-                //await _context.SaveChangesAsync();
-                Update(propertyGet);
+               await Update(property);
 
             }
 

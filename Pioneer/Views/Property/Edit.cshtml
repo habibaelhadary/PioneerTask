@@ -18,8 +18,9 @@
         <label asp-for="Type" class="form-label mt-4">Data Type</label>
         @if (ViewBag.IsInUse)
         {
-            <select asp-for="Type" asp-items="Html.GetEnumSelectList<Domin.Enum.PropertyTypes>()" class="form-control" id="property-type" disabled></select>
-            <small class="form-text text-warning">You cannot change the property type because it's already linked to employees.</small>
+            <select asp-for="Type" asp-items="Html.GetEnumSelectList<Domin.Enum.PropertyTypes>()" class="form-control" id="property-type" disabled="disabled"></select>
+            <input type="hidden" asp-for="Type" />
+            <small class="form-text text-warning">You cannot change the property type because it's already linked to employees.</small>  
         }
         else
         {

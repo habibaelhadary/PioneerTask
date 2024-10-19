@@ -1,31 +1,59 @@
-﻿@using Application_Layer.Dtos.Employee
+﻿@model Application_Layer.Dtos.Employee.GetEmployeeDto
 @using Newtonsoft.Json
-@model GetEmployeeDto
 
-<h2 class="mt-4">Create New Employee</h2>
+<h2>Create New Employee</h2>
 
 <form asp-action="Create" method="post">
 
     <div class="form-group">
-        <label for="Code">Code</label>
-        <input type="text" asp-for="EmployeeCode" class="form-control" placeholder="Enter employee code" />
-        <span asp-validation-for="EmployeeCode" class="text-danger"></span>
+        <label for="EmployeeCode">Code</label>
+        <input type="text" name="EmployeeCode" class="form-control" />
     </div>
-
 
     <div class="form-group">
-        <label for="Name">Name</label>
-        <input type="text" asp-for="EmployeeName" class="form-control" placeholder="Enter employee name" />
-        <span asp-validation-for="EmployeeName" class="text-danger"></span>
+        <label for="EmployeeName">Name</label>
+        <input type="text" name="EmployeeName" class="form-control" />
     </div>
 
+    <div id="required-properties-container">
+        <h4>Required Properties</h4>
+        @foreach (var property in Model.Properties.Where(p => p.Required))
+        {
+            <div class="form-group mb-4">
+                <label>@property.Name (@property.Type)</label>
+
+                <!-- Hidden field for Property ID -->
+                <input type="hidden" name="SelectedProperties_PropId" value="@property.Id" />
+
+                @switch (property.Type)
+                {
+                    case Domin.Enum.PropertyTypes.String:
+                        <input type="text" name="SelectedProperties_Value" class="form-control" placeholder="Enter value" />
+                        break;
+                    case Domin.Enum.PropertyTypes.Integer:
+                        <input type="number" name="SelectedProperties_Value" class="form-control" placeholder="Enter number" />
+                        break;
+                    case Domin.Enum.PropertyTypes.Date:
+                        <input type="date" name="SelectedProperties_Value" class="form-control" />
+                        break;
+                    case Domin.Enum.PropertyTypes.DropDown:
+                        <select name="SelectedProperties_Value" class="form-control">
+                            <option value="">Select a value</option>
+                            @foreach (var dropDownValue in property.DropDownValues)
+                            {
+                                <option value="@dropDownValue.Value">@dropDownValue.Value</option>
+                            }
+                        </select>
+                        break;
+                }
+            </div>
+        }
+    </div>
 
     <div class="form-group mt-4">
-        <label>Select Properties (Optional)</label>
+        <label>Add Optional Properties</label>
         <button type="button" id="add-property-btn" class="btn btn-secondary mb-3">Add Property</button>
-
-
-        <div id="properties-container"></div>
+        <div id="optional-properties-container"></div>
     </div>
 
     <button type="submit" class="btn btn-primary">Create Employee</button>
@@ -34,71 +62,69 @@
 @section Scripts {
     <script>
         let properties = @Html.Raw(JsonConvert.SerializeObject(Model.Properties));
-
-        // console.log(properties);
-
         let propertyIndex = 0;
-
         const propertyTypeMapping = {
             0: 'String',
             1: 'Integer',
             2: 'Date',
             3: 'Dropdown'
         };
-
         document.getElementById("add-property-btn").addEventListener("click", function () {
-            addPropertyField();
+            addOptionalPropertyField();
         });
 
-        function addPropertyField() {
-            let propertySelect = document.createElement("select");
-            propertySelect.className = "form-control mb-3";
-            propertySelect.innerHTML = `<option value="">-- Select a Property --</option>`;
+        function addOptionalPropertyField() {
+            let propertySelectDiv = document.createElement("div");
+            propertySelectDiv.className = "form-group mb-3";
 
-            properties.forEach(property => {
+            let propertySelect = document.createElement("select");
+            propertySelect.className = "form-control";
+            propertySelect.innerHTML = `<option value="">-- Select an Optional Property --</option>`;
+
+            let optionalProperties = properties.filter(p => !p.Required);
+
+            optionalProperties.forEach(property => {
                 const propertyTypeName = propertyTypeMapping[property.Type];
-                propertySelect.innerHTML += `<option value="${property.Id}" data-type="${property.Type}" data-required="${property.Required}">
-                                            ${property.Name} (${propertyTypeName}) ${property.Required ? '*' : ''}
-                                        </option>`;
+                propertySelect.innerHTML += `<option value="${property.Id}" data-type="${property.Type}">
+                                                                    ${property.Name} (${propertyTypeName})
+                                                        </option>`;
             });
 
-            let container = document.getElementById("properties-container");
-            container.appendChild(propertySelect);
+            propertySelectDiv.appendChild(propertySelect);
+            let container = document.getElementById("optional-properties-container");
+            container.appendChild(propertySelectDiv);
 
             propertySelect.addEventListener("change", function () {
                 let selectedPropertyId = this.value;
-                let selectedProperty = properties.find(p => p.Id == selectedPropertyId);
+                let selectedProperty = optionalProperties.find(p => p.Id == selectedPropertyId);
 
                 if (selectedProperty) {
-                    renderInputForProperty(selectedProperty, this);
+                    renderInputForOptionalProperty(selectedProperty, propertySelectDiv);
                 }
             });
         }
 
-        function renderInputForProperty(property, selectElement) {
+        function renderInputForOptionalProperty(property, propertySelectDiv) {
             let inputContainer = document.createElement("div");
             inputContainer.className = "form-group mb-4";
-
             const propertyTypeName = propertyTypeMapping[property.Type];
-
             let label = document.createElement("label");
-            label.innerText = `${property.Name} (${propertyTypeName}) ${property.Required ? '*' : ''}`;
+            label.innerText = `${property.Name} (${propertyTypeName})`;
             inputContainer.appendChild(label);
 
             let inputField;
-
             switch (property.Type) {
                 case 0: // String
-                    inputField = `<input type="text" name="SelectedProperties[${propertyIndex}].Value" class="form-control" placeholder="Enter value" required="${property.Required}" />`;
+                    inputField = `<input type="text" name="SelectedProperties_Value" class="form-control" placeholder="Enter value" />`;
                     break;
                 case 1: // Integer
-                    inputField = `<input type="number" name="SelectedProperties[${propertyIndex}].Value" class="form-control" placeholder="Enter number" required="${property.Required}" />`;
+                    inputField = `<input type="number" name="SelectedProperties_Value" class="form-control" placeholder="Enter number" />`;
                     break;
                 case 2: // Date
-                    inputField = `<input type="date" name="SelectedProperties[${propertyIndex}].Value" class="form-control" required="${property.Required}" />`;
+                    inputField = `<input type="date" name="SelectedProperties_Value" class="form-control" />`;
                     break;
-                case 3: // Dropdown
-                    inputField = `<select name="SelectedProperties[${propertyIndex}].Value" class="form-control" required="${property.Required}">
+                case 3: // DropDown
+                    inputField = `<select name="SelectedProperties_Value" class="form-control">
                                               <option value="">Select a value</option>`;
                     property.DropDownValues.forEach(value => {
                         inputField += `<option value="${value.Value}">${value.Value}</option>`;
@@ -107,18 +133,12 @@
                     break;
             }
 
-            let hiddenInput = `<input type="hidden" name="SelectedProperties[${propertyIndex}].PropId" value="${property.Id}" />`;
-
+            let hiddenInput = `<input type="hidden" name="SelectedProperties_PropId" value="${property.Id}" />`;
             inputContainer.innerHTML += inputField + hiddenInput;
-
-            propertyIndex++;
-
-            selectElement.insertAdjacentElement('afterend', inputContainer);
+            propertySelectDiv.appendChild(inputContainer);
         }
-
     </script>
 
-    <!-- jQuery validation scripts -->
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 }
