@@ -1,0 +1,85 @@
+﻿@using Domin.Enum
+
+@model Application_Layer.Dtos.Employee.GetEmployeeDto
+
+<h2 class="mt-4">Edit Employee</h2>
+
+<form asp-action="Edit" method="post">
+
+    <input type="hidden" asp-for="EmployeeId" />
+
+    <div class="form-group">
+        <label for="Code">Employee Code</label>
+        <input type="text" asp-for="EmployeeCode" class="form-control" placeholder="Enter employee code" />
+        <span asp-validation-for="EmployeeCode" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="Name">Employee Name</label>
+        <input type="text" asp-for="EmployeeName" class="form-control" placeholder="Enter employee name" />
+        <span asp-validation-for="EmployeeName" class="text-danger"></span>
+    </div>
+
+    @if (Model.Properties != null && Model.Properties.Any())
+    {
+        <h5 class="mt-4">Employee Properties</h5>
+        <div class="row">
+            @for (int i = 0; i < Model.Properties.Count; i++)
+            {
+                var property = Model.Properties[i];
+                var selectedProperty = Model.SelectedProperties.FirstOrDefault(sp => sp.PropId == property.Id);
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>@property.Name (@property.Type)</label>
+
+
+                        @if (property.Type == PropertyTypes.String)
+                        {
+                            <input type="text" name="SelectedProperties[@i].Value" class="form-control"
+                                   value="@selectedProperty?.Value" />
+                        }
+
+
+                        @if (property.Type == PropertyTypes.Integer)
+                        {
+                            <input type="number" name="SelectedProperties[@i].Value" class="form-control"
+                                   value="@selectedProperty?.Value" />
+                        }
+
+
+                        @if (property.Type == PropertyTypes.Date)
+                        {
+                            <input type="date" name="SelectedProperties[@i].Value" class="form-control"
+                                   value="@selectedProperty?.Value" />
+                        }
+
+
+                        @if (property.Type == PropertyTypes.DropDown)
+                        {
+                            <select name="SelectedProperties[@i].Value" class="form-control">
+                                <option value="">Select a value</option>
+                                @foreach (var option in property.DropDownValues)
+                                {
+                                    <option value="@option.Value" selected="@(selectedProperty?.Value == option.Value ? "selected" : null)">
+                                        @option.Value
+                                    </option>
+                                }
+                            </select>
+                        }
+                        <input type="hidden" name="SelectedProperties[@i].PropId" value="@property.Id" />
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <button type="submit" class="btn btn-primary mt-4">Save Changes</button>
+</form>
+
+@section Scripts {
+
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
+

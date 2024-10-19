@@ -1,0 +1,80 @@
+﻿@model Application_Layer.Dtos.Propert.PropertyDto
+
+@{
+
+}
+<h2 class="mt-5">@(Model.Id == 0 ? "Create Property New" : "Edit Property")</h2>
+<form asp-action="Create" method="post">
+    <div>
+        <label for="Name" class="form-label mt-4" asp-for="Name"> Data Name</label>
+        <input type="text" asp-for="Name" class="form-control" aria-describedby="DataName" placeholder="Enter DataName">
+        @* <small id="emailHelp" class="form-text text-muted">We'll never sare your email with anyone else.</small> *@
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Type" class="form-label mt-4">Data Type</label>
+        <select asp-for="Type" class="form-control" id="property-type">
+            <option selected value="">-- Select here --</option>
+            <option value="String">String</option>
+            <option value="Integer">Integer</option>
+            <option value="Date">Date</option>
+            <option value="Dropdown">Dropdown</option>
+        </select>
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-4">
+        <label class="form-check-label" asp-for="Required">Required</label>
+        <input asp-for="Required" class="form-check-input ms-2" type="checkbox" />
+        <div class="mt-1">
+            <small class="form-text text-muted ">If you want Required, choose it.</small>
+        </div>
+
+        <div id="dropdown-values-section" class="form-group mt-4" style="display: none;">
+            <label>Dropdown Values</label>
+            <div id="dropdown-values-container">
+                @for (int i = 0; i < Model.DropDownValues.Count; i++)
+                {
+                    <div class="form-group">
+                        <input asp-for="@Model.DropDownValues[i].Value" class="form-control" />
+
+                    </div>
+                }
+            </div>
+            <button type="button" id="add-dropdown-value" class="btn btn-secondary">Add Dropdown Value</button>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary mt-4">Save</button>
+</form>
+
+@section Scripts {
+    <script>
+        // Function to toggle dropdown values section
+        function toggleDropdownValues() {
+            const typeSelect = document.getElementById("property-type");
+            const dropdownSection = document.getElementById("dropdown-values-section");
+            dropdownSection.style.display = typeSelect.value === "Dropdown" ? "block" : "none";
+        }
+
+        // Function to add a dropdown value input
+        function addDropdownValue() {
+            const container = document.getElementById("dropdown-values-container");
+            const index = container.children.length;
+            const input = document.createElement("div");
+            input.className = "input-group mb-2";
+            input.innerHTML = `
+                                <input type="text" name="DropDownValues[${index}].Value" class="form-control" placeholder="Enter Dropdown Value" />
+                                <button type="button" class="btn btn-danger btn-sm ms-2" onclick="this.parentNode.remove()">Remove</button>
+                            `;
+            container.appendChild(input);
+        }
+
+        // Attach event listeners
+        document.getElementById("property-type").addEventListener("change", toggleDropdownValues);
+        document.getElementById("add-dropdown-value").addEventListener("click", addDropdownValue);
+
+        toggleDropdownValues();
+    </script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

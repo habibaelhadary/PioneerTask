@@ -1,3 +1,11 @@
+using Application_Layer.Services.EmpServices;
+using Application_Layer.Services.Propert;
+using Domin.Interfaces;
+using Infrastructure.Context;
+using Infrastructure.Repository.EmpRepositor;
+using Infrastructure.Repository.PropertyRepositor;
+using Microsoft.EntityFrameworkCore;
+
 namespace Pioneer
 {
     public class Program
@@ -8,7 +16,13 @@ namespace Pioneer
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<PioneerManagementDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("Myconnection")));
 
+
+            builder.Services.AddScoped<IPropReprositry, ProRepository>();
+            builder.Services.AddScoped<IPropertyService, PropertyService>();
+            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

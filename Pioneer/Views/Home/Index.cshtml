@@ -2,7 +2,32 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
+@* <div class="text-center">
+
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <button type="button" class="btn btn-primary btn-lg">Employee Page</button>
+    <button type="button" class="btn btn-primary btn-lg">Property Page</button>
+    <div class="row">
+        <!-- Left column for the image -->
+        <div class="col-3 d-flex justify-content-start align-items-end  bg-danger" style="position: relative; top: -10%;">
+            <img src="~/image/pion.png" class="img-fluid" alt="Your Image" style="max-height: 200px;" />
+        </div>
+
+</div>
+</div> *@
+
+<div class="container">
+    <!-- Row for the image -->
+    <div class="row justify-content-start mb-4">
+        <div class="col-3">
+            <img src="~/image/pion.png" class="img-fluid" alt="Your Image" style="max-height: 100px;" />
+        </div>
+    </div>
+
+    <!-- Text and buttons below the image -->
+    <div class="text-center">
+        <h1 class="display-4">Welcome</h1>
+        <a class="btn btn-primary btn-lg" asp-controller="Employee" asp-action="Index">Employee Page</a>
+        <a asp-controller="Property" asp-action="Index" class="btn btn-primary btn-lg">Property Page</a>
+    </div>
 </div>
