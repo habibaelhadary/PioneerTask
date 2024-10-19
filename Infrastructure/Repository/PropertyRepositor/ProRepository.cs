@@ -52,7 +52,7 @@ namespace Infrastructure.Repository.PropertyRepositor
         }
         public async Task<bool> IsPropertyInUse(int propertyId)
         {
-            return await _context.Employees_Properties.AnyAsync(ep => ep.PropertyId == propertyId);
+            return await _context.Employees_Properties.AnyAsync(ep => ep.PropertyId == propertyId && ep.IsDeleted==false);
         }
         public async Task Remove(Property property)
         {
